@@ -1,0 +1,99 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Sparkles } from "lucide-react";
+
+interface WelcomeViewProps {
+  onNext: (name: string, email: string) => void;
+}
+
+export const WelcomeView = ({ onNext }: WelcomeViewProps) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [consent, setConsent] = useState(false);
+
+  const isValid = name.trim() && email.trim() && email.includes("@") && consent;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isValid) {
+      onNext(name.trim(), email.trim());
+    }
+  };
+
+  return (
+    <div className="kiosk-card fade-in">
+      <div className="text-center mb-10">
+        <div className="flex justify-center mb-6">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center pulse-glow">
+            <Sparkles className="w-10 h-10 text-primary-foreground" />
+          </div>
+        </div>
+        <h1 className="kiosk-title font-display">
+          Joulun Osaaja
+        </h1>
+        <p className="text-2xl md:text-3xl text-primary font-display mb-2">
+          AI Tonttukioski
+        </p>
+        <p className="kiosk-subtitle">
+          Tervetuloa! Muutu tontuksi tekoälyn avulla ja saa oma osaamismerkkisi.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-2">
+          <label htmlFor="name" className="block text-lg font-medium text-foreground">
+            Nimesi
+          </label>
+          <input
+            id="name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Kirjoita nimesi..."
+            className="kiosk-input"
+            autoComplete="name"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label htmlFor="email" className="block text-lg font-medium text-foreground">
+            Sähköpostiosoitteesi
+          </label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="nimi@esimerkki.fi"
+            className="kiosk-input"
+            autoComplete="email"
+          />
+        </div>
+
+        <div className="flex items-start gap-4 p-4 rounded-xl bg-muted/50">
+          <Checkbox
+            id="consent"
+            checked={consent}
+            onCheckedChange={(checked) => setConsent(checked === true)}
+            className="mt-1 h-6 w-6 border-2"
+          />
+          <label htmlFor="consent" className="text-base text-muted-foreground cursor-pointer">
+            Hyväksyn tietojeni käsittelyn tonttukuvan luomiseksi ja osaamismerkin myöntämiseksi. 
+            Tietoja käytetään vain tämän tapahtuman yhteydessä.
+          </label>
+        </div>
+
+        <Button
+          type="submit"
+          variant="kiosk"
+          size="kiosk"
+          disabled={!isValid}
+          className="mt-8"
+        >
+          Aloita seikkailu ✨
+        </Button>
+      </form>
+    </div>
+  );
+};
