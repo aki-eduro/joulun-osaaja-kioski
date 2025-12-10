@@ -1,96 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Festive Christmas Theme - Dark & Elegant */
+    --background: 222 47% 8%;
+    --foreground: 45 100% 96%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 222 40% 12%;
+    --card-foreground: 45 100% 96%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 222 40% 10%;
+    --popover-foreground: 45 100% 96%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Christmas Gold */
+    --primary: 43 96% 56%;
+    --primary-foreground: 222 47% 8%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Deep Christmas Red */
+    --secondary: 0 72% 45%;
+    --secondary-foreground: 45 100% 96%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 222 30% 18%;
+    --muted-foreground: 220 15% 65%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Festive Green Accent */
+    --accent: 152 60% 35%;
+    --accent-foreground: 45 100% 96%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 45 100% 96%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 222 30% 22%;
+    --input: 222 30% 22%;
+    --ring: 43 96% 56%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Custom festive colors */
+    --christmas-gold: 43 96% 56%;
+    --christmas-red: 0 72% 45%;
+    --christmas-green: 152 60% 35%;
+    --christmas-navy: 222 47% 8%;
+    --christmas-light: 220 30% 95%;
+    --snow-white: 0 0% 100%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Gradients */
+    --gradient-festive: linear-gradient(135deg, hsl(222 47% 12%) 0%, hsl(0 72% 20%) 50%, hsl(222 47% 8%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(43 96% 56%) 0%, hsl(35 90% 45%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(222 40% 14%) 0%, hsl(222 40% 10%) 100%);
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Shadows */
+    --shadow-glow: 0 0 40px hsl(43 96% 56% / 0.3);
+    --shadow-card: 0 20px 40px -10px hsl(0 0% 0% / 0.5);
 
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Sidebar - keeping defaults */
+    --sidebar-background: 222 40% 10%;
+    --sidebar-foreground: 45 100% 96%;
+    --sidebar-primary: 43 96% 56%;
+    --sidebar-primary-foreground: 222 47% 8%;
+    --sidebar-accent: 222 30% 18%;
+    --sidebar-accent-foreground: 45 100% 96%;
+    --sidebar-border: 222 30% 22%;
+    --sidebar-ring: 43 96% 56%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Same as root - app is always dark themed */
+    --background: 222 47% 8%;
+    --foreground: 45 100% 96%;
+    --card: 222 40% 12%;
+    --card-foreground: 45 100% 96%;
+    --popover: 222 40% 10%;
+    --popover-foreground: 45 100% 96%;
+    --primary: 43 96% 56%;
+    --primary-foreground: 222 47% 8%;
+    --secondary: 0 72% 45%;
+    --secondary-foreground: 45 100% 96%;
+    --muted: 222 30% 18%;
+    --muted-foreground: 220 15% 65%;
+    --accent: 152 60% 35%;
+    --accent-foreground: 45 100% 96%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 45 100% 96%;
+    --border: 222 30% 22%;
+    --input: 222 30% 22%;
+    --ring: 43 96% 56%;
   }
 }
 
@@ -100,6 +98,174 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+@layer components {
+  .kiosk-container {
+    @apply min-h-screen w-full flex flex-col items-center justify-center p-6 md:p-12;
+    background: var(--gradient-festive);
+  }
+
+  .kiosk-card {
+    @apply w-full max-w-[960px] rounded-3xl p-8 md:p-12;
+    background: var(--gradient-card);
+    box-shadow: var(--shadow-card);
+    border: 1px solid hsl(var(--border));
+  }
+
+  .kiosk-title {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-4;
+    color: hsl(var(--christmas-gold));
+    text-shadow: 0 0 30px hsl(var(--christmas-gold) / 0.4);
+  }
+
+  .kiosk-subtitle {
+    @apply text-lg md:text-xl text-center mb-8;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .kiosk-button {
+    @apply w-full py-6 px-8 text-xl md:text-2xl font-semibold rounded-2xl transition-all duration-300;
+    @apply hover:scale-[1.02] active:scale-[0.98];
+    background: var(--gradient-gold);
+    color: hsl(var(--primary-foreground));
+    box-shadow: var(--shadow-glow);
+  }
+
+  .kiosk-button:disabled {
+    @apply opacity-50 cursor-not-allowed;
+    @apply hover:scale-100 active:scale-100;
+  }
+
+  .kiosk-button-secondary {
+    @apply w-full py-5 px-6 text-lg md:text-xl font-medium rounded-xl transition-all duration-300;
+    @apply border-2 hover:scale-[1.02] active:scale-[0.98];
+    background: transparent;
+    border-color: hsl(var(--christmas-gold));
+    color: hsl(var(--christmas-gold));
+  }
+
+  .kiosk-button-secondary:hover {
+    background: hsl(var(--christmas-gold) / 0.1);
+  }
+
+  .kiosk-input {
+    @apply w-full py-4 px-6 text-lg rounded-xl border-2 transition-all duration-300;
+    @apply focus:ring-2 focus:ring-offset-2;
+    background: hsl(var(--muted));
+    border-color: hsl(var(--border));
+    color: hsl(var(--foreground));
+  }
+
+  .kiosk-input:focus {
+    border-color: hsl(var(--christmas-gold));
+    --tw-ring-color: hsl(var(--christmas-gold));
+  }
+
+  .kiosk-input::placeholder {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .elf-portrait {
+    @apply relative overflow-hidden rounded-2xl;
+    aspect-ratio: 3 / 4;
+  }
+
+  .elf-portrait img {
+    @apply w-full h-full object-cover;
+  }
+
+  .snowfall {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .snowflake {
+    position: absolute;
+    top: -20px;
+    color: white;
+    opacity: 0.7;
+    font-size: 1rem;
+    animation: fall linear infinite;
+  }
+
+  @keyframes fall {
+    0% {
+      transform: translateY(-20px) rotate(0deg);
+    }
+    100% {
+      transform: translateY(100vh) rotate(360deg);
+    }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% {
+      box-shadow: 0 0 20px hsl(var(--christmas-gold) / 0.3);
+    }
+    50% {
+      box-shadow: 0 0 40px hsl(var(--christmas-gold) / 0.5);
+    }
+  }
+}
+
+/* Print styles for certificate */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .certificate-page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    margin: 0;
+    background: white !important;
+  }
+}
+
+.print-only {
+  display: none;
 }
