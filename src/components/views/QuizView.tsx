@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Lightbulb } from "lucide-react";
+import { ArrowRight, Gift } from "lucide-react";
 
 interface QuizViewProps {
   name: string;
@@ -24,7 +24,7 @@ export const QuizView = ({ name, onNext, onBack }: QuizViewProps) => {
       <div className="text-center mb-8">
         <div className="flex justify-center mb-6">
           <div className="w-16 h-16 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center">
-            <Lightbulb className="w-8 h-8 text-accent-foreground" />
+            <Gift className="w-8 h-8 text-accent-foreground" />
           </div>
         </div>
         <h1 className="kiosk-title font-display text-3xl md:text-4xl">
@@ -38,13 +38,13 @@ export const QuizView = ({ name, onNext, onBack }: QuizViewProps) => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-4">
           <label htmlFor="quiz" className="block text-xl font-medium text-foreground text-center">
-            Kerro lyhyesti, miten toivoisit tekoälyn auttavan sinua joulun aikaan?
+            Kerro lyhyesti, mitä toivoisit joululahjaksi tai millainen olisi unelmiesi joululahja?
           </label>
           <textarea
             id="quiz"
             value={answer}
             onChange={(e) => setAnswer(e.target.value.slice(0, maxLength))}
-            placeholder="Esimerkiksi: Toivoisin tekoälyn auttavan lahjaostoksissa..."
+            placeholder="Esimerkiksi: Uusi kitara, Lapin mökkireissu, pelitietokone..."
             className="kiosk-input min-h-[160px] resize-none"
             rows={5}
           />

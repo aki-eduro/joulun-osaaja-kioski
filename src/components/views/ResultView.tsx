@@ -33,11 +33,36 @@ export const ResultView = ({
 
       if (error) throw error;
 
-      setBadgeSent(true);
-      toast({
-        title: "Osaamismerkki lähetetty!",
-        description: `Merkki on lähetetty osoitteeseen ${email}`,
-      });
+      if (data?.success) {
+        setBadgeSent(true);
+        toast({
+          title: "Osaamismerkki lähetetty!",
+          description: `Merkki on lähetetty osoitteeseen ${email}`,
+        });
+      } else {
+        // Handle specific error codes
+        const errorCode = data?.error;
+        
+        if (errorCode === "OBF_NOT_CONFIGURED") {
+          toast({
+            title: "Osaamismerkki ei käytössä",
+            description: "Osaamismerkin lähetys ei ole vielä käytössä (OBF-asetukset puuttuvat).",
+            variant: "destructive",
+          });
+        } else if (errorCode === "OBF_REQUEST_FAILED") {
+          toast({
+            title: "Lähetys epäonnistui",
+            description: "Osaamismerkin lähetys epäonnistui. Kokeile hetken kuluttua uudelleen tai pyydä ohjaajaa tarkistamaan asetukset.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Virhe",
+            description: data?.message || "Tuntematon virhe tapahtui.",
+            variant: "destructive",
+          });
+        }
+      }
     } catch (error) {
       console.error("Badge error:", error);
       toast({

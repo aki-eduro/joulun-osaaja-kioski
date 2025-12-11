@@ -30,74 +30,100 @@ serve(async (req) => {
     const OBF_CLIENT_SECRET = Deno.env.get("OBF_CLIENT_SECRET");
     const OBF_BADGE_ID = Deno.env.get("OBF_BADGE_ID");
 
-    let obfResponse = null;
-    let badgeIssued = false;
-
-    // If OBF credentials are configured, try to issue the badge
-    if (OBF_CLIENT_ID && OBF_CLIENT_SECRET && OBF_BADGE_ID) {
-      console.log("OBF credentials found, attempting to issue badge...");
+    // Check if OBF is configured
+    if (!OBF_CLIENT_ID || !OBF_CLIENT_SECRET || !OBF_BADGE_ID) {
+      console.error("OBF not configured - missing env vars:", {
+        hasClientId: !!OBF_CLIENT_ID,
+        hasClientSecret: !!OBF_CLIENT_SECRET,
+        hasBadgeId: !!OBF_BADGE_ID,
+      });
       
-      try {
-        // Get OBF Access Token
-        const tokenResponse = await fetch("https://openbadgefactory.com/v1/client/oauth2/token", {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "OBF_NOT_CONFIGURED",
+          message: "Open Badge Factory -asetukset puuttuvat",
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    console.log("OBF credentials found, attempting to issue badge...");
+
+    let obfResponse = null;
+
+    try {
+      // Get OBF Access Token
+      console.log("Fetching OBF access token...");
+      const tokenResponse = await fetch("https://openbadgefactory.com/v1/client/oauth2/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          grant_type: "client_credentials",
+          client_id: OBF_CLIENT_ID,
+          client_secret: OBF_CLIENT_SECRET,
+        }),
+      });
+
+      if (!tokenResponse.ok) {
+        const tokenError = await tokenResponse.text();
+        console.error("OBF token error:", tokenResponse.status, tokenError);
+        throw new Error(`OBF token request failed: ${tokenResponse.status}`);
+      }
+
+      const tokenData = await tokenResponse.json();
+      const accessToken = tokenData.access_token;
+      console.log("OBF access token received");
+
+      // Issue the badge
+      console.log("Issuing badge to:", email);
+      const issueResponse = await fetch(
+        `https://openbadgefactory.com/v1/${OBF_CLIENT_ID}/badge/${OBF_BADGE_ID}/issue`,
+        {
           method: "POST",
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
           },
-          body: new URLSearchParams({
-            grant_type: "client_credentials",
-            client_id: OBF_CLIENT_ID,
-            client_secret: OBF_CLIENT_SECRET,
+          body: JSON.stringify({
+            recipient: [email],
+            issued_on: Math.floor(Date.now() / 1000),
+            email_subject: "Onneksi olkoon! Olet ansainnut Joulun Osaaja -osaamismerkin!",
+            email_body: `Hei ${name}!\n\nOlet suorittanut Joulun Osaaja -tehtävän ja ansainnut digitaalisen osaamismerkin.\n\nOsaamismerkki todistaa rohkeutesi kokeilla uutta teknologiaa ja tutustua tekoälyn mahdollisuuksiin.\n\nOnnea ja iloista joulunaikaa!\n\nLapland AI Lab`,
+            email_link_text: "Näytä osaamismerkki",
           }),
-        });
-
-        if (!tokenResponse.ok) {
-          console.error("OBF token error:", await tokenResponse.text());
-          throw new Error("Failed to get OBF access token");
         }
+      );
 
-        const tokenData = await tokenResponse.json();
-        const accessToken = tokenData.access_token;
-
-        // Issue the badge
-        const issueResponse = await fetch(
-          `https://openbadgefactory.com/v1/${OBF_CLIENT_ID}/badge/${OBF_BADGE_ID}/issue`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              recipient: [email],
-              issued_on: Math.floor(Date.now() / 1000),
-              email_subject: "Onneksi olkoon! Olet ansainnut Joulun Osaaja -osaamismerkin!",
-              email_body: `Hei ${name}!\n\nOlet suorittanut Joulun Osaaja -tehtävän ja ansainnut digitaalisen osaamismerkin.\n\nOsaamismerkki todistaa rohkeutesi kokeilla uutta teknologiaa ja tutustua tekoälyn mahdollisuuksiin.\n\nOnnea ja iloista joulunaikaa!\n\nLapland AI Lab`,
-              email_link_text: "Näytä osaamismerkki",
-            }),
-          }
-        );
-
-        if (!issueResponse.ok) {
-          console.error("OBF issue error:", await issueResponse.text());
-          throw new Error("Failed to issue badge");
-        }
-
-        obfResponse = await issueResponse.json();
-        badgeIssued = true;
-        console.log("Badge issued successfully:", obfResponse);
-      } catch (obfError) {
-        console.error("OBF error:", obfError);
-        // Continue without OBF - we'll still mark it as processed
+      if (!issueResponse.ok) {
+        const issueError = await issueResponse.text();
+        console.error("OBF issue error:", issueResponse.status, issueError);
+        throw new Error(`OBF badge issue failed: ${issueResponse.status}`);
       }
-    } else {
-      console.log("OBF credentials not configured, skipping badge issuance");
-      // Simulate badge issuance for demo purposes
-      badgeIssued = true;
-      obfResponse = { 
-        demo: true, 
-        message: "Badge would be issued when OBF is configured" 
-      };
+
+      obfResponse = await issueResponse.json();
+      console.log("Badge issued successfully:", obfResponse);
+
+    } catch (obfError) {
+      console.error("OBF request failed:", obfError);
+      
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "OBF_REQUEST_FAILED",
+          message: "Osaamismerkin lähetys epäonnistui",
+          details: obfError instanceof Error ? obfError.message : "Unknown OBF error",
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
     }
 
     // Update the database record
@@ -105,7 +131,7 @@ serve(async (req) => {
       const { error: updateError } = await supabase
         .from("elf_badges")
         .update({
-          badge_issued: badgeIssued,
+          badge_issued: true,
           badge_issued_at: new Date().toISOString(),
           obf_response: obfResponse,
         })
@@ -113,16 +139,14 @@ serve(async (req) => {
 
       if (updateError) {
         console.error("Database update error:", updateError);
+        // Don't fail the whole request for DB update error
       }
     }
 
     return new Response(
       JSON.stringify({
         success: true,
-        message: badgeIssued 
-          ? "Osaamismerkki lähetetty sähköpostiisi!" 
-          : "Merkki rekisteröity (OBF ei konfiguroitu)",
-        obf_configured: !!(OBF_CLIENT_ID && OBF_CLIENT_SECRET && OBF_BADGE_ID),
+        message: "Osaamismerkki lähetetty sähköpostiisi!",
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -133,7 +157,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: "UNKNOWN_ERROR",
+        message: error instanceof Error ? error.message : "Tuntematon virhe",
       }),
       {
         status: 500,

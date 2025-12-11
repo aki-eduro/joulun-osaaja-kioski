@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Sparkles } from "lucide-react";
 
 interface WelcomeViewProps {
@@ -10,9 +9,8 @@ interface WelcomeViewProps {
 export const WelcomeView = ({ onNext }: WelcomeViewProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [consent, setConsent] = useState(false);
 
-  const isValid = name.trim() && email.trim() && email.includes("@") && consent;
+  const isValid = name.trim() && email.trim() && email.includes("@");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,18 +69,9 @@ export const WelcomeView = ({ onNext }: WelcomeViewProps) => {
           />
         </div>
 
-        <div className="flex items-start gap-4 p-4 rounded-xl bg-muted/50">
-          <Checkbox
-            id="consent"
-            checked={consent}
-            onCheckedChange={(checked) => setConsent(checked === true)}
-            className="mt-1 h-6 w-6 border-2"
-          />
-          <label htmlFor="consent" className="text-base text-muted-foreground cursor-pointer">
-            Hyväksyn tietojeni käsittelyn tonttukuvan luomiseksi ja osaamismerkin myöntämiseksi. 
-            Tietoja käytetään vain tämän tapahtuman yhteydessä.
-          </label>
-        </div>
+        <p className="text-sm text-muted-foreground p-4 rounded-xl bg-muted/50">
+          Tietoja käytetään vain tonttukuvan luomiseen ja osaamismerkin myöntämiseen.
+        </p>
 
         <Button
           type="submit"
