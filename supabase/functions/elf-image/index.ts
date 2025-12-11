@@ -30,6 +30,20 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    // Build the prompt with optional gift wish
+    const wish = (quiz_answer || "").trim().slice(0, 120);
+    
+    let promptText = "Transform this person into a friendly, cheerful Christmas elf. Add a festive red and green elf hat with a gold bell, pointed elf ears, rosy cheeks. Keep the person's face recognizable and maintain their expression. High quality, photorealistic style with warm Christmas lighting.";
+    
+    if (wish) {
+      // Include gift wish in the scene
+      promptText += ` The background and scene should subtly reflect this Christmas gift wish: "${wish}". Use it as inspiration for the environment, gifts, or atmosphere visible in the background, but keep the person clearly visible as the main subject.`;
+      console.log("Including gift wish in prompt:", wish);
+    } else {
+      // Default snowy background
+      promptText += " Use a festive snowy winter background with soft bokeh lights and warm atmosphere.";
+    }
+
     // Generate elf image using Lovable AI Gateway
     console.log("Calling Lovable AI for elf transformation...");
     
@@ -47,7 +61,7 @@ serve(async (req) => {
             content: [
               {
                 type: "text",
-                text: "Transform this person into a friendly, cheerful Christmas elf. Add a festive red and green elf hat with a gold bell, pointed elf ears, rosy cheeks, and a festive snowy winter background with soft bokeh lights. Keep the person's face recognizable and maintain their expression. High quality, photorealistic style with warm Christmas lighting.",
+                text: promptText,
               },
               {
                 type: "image_url",

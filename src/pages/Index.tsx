@@ -109,6 +109,7 @@ const Index = () => {
           <CertificateView
             name={elfData.name}
             elfImageUrl={elfData.elfImageUrl || ""}
+            quizAnswer={elfData.quizAnswer}
             onBack={() => setStep("result")}
           />
         );

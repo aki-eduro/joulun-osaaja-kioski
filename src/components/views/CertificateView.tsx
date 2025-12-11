@@ -4,10 +4,11 @@ import { Printer, ArrowLeft } from "lucide-react";
 interface CertificateViewProps {
   name: string;
   elfImageUrl: string;
+  quizAnswer?: string;
   onBack: () => void;
 }
 
-export const CertificateView = ({ name, elfImageUrl, onBack }: CertificateViewProps) => {
+export const CertificateView = ({ name, elfImageUrl, quizAnswer, onBack }: CertificateViewProps) => {
   const today = new Date().toLocaleDateString("fi-FI", {
     day: "numeric",
     month: "long",
@@ -17,6 +18,13 @@ export const CertificateView = ({ name, elfImageUrl, onBack }: CertificateViewPr
   const handlePrint = () => {
     window.print();
   };
+
+  // Truncate wish to 160 chars for display
+  const displayWish = quizAnswer && quizAnswer.trim() 
+    ? quizAnswer.trim().length > 160 
+      ? quizAnswer.trim().slice(0, 160) + "…" 
+      : quizAnswer.trim()
+    : null;
 
   return (
     <>
@@ -81,11 +89,19 @@ export const CertificateView = ({ name, elfImageUrl, onBack }: CertificateViewPr
               </div>
             </div>
 
-            <p className="max-w-lg text-christmas-navy/80 leading-relaxed mb-8 print:text-base">
+            <p className="max-w-lg text-christmas-navy/80 leading-relaxed mb-6 print:text-base">
               Henkilö on osoittanut heittäytymiskykyä ja tutustunut tekoälyn mahdollisuuksiin 
               Joulun Osaaja -pajassa. Todistus on myönnetty tunnustuksena rohkeudesta 
               kokeilla uutta teknologiaa luovalla tavalla.
             </p>
+
+            {/* Gift wish */}
+            {displayWish && (
+              <div className="max-w-lg mb-6 p-4 rounded-lg bg-christmas-gold/10 border border-christmas-gold/20">
+                <p className="text-sm text-christmas-navy/60 mb-1">Tontun lahjatoive:</p>
+                <p className="text-christmas-navy/90 italic">"{displayWish}"</p>
+              </div>
+            )}
           </div>
 
           {/* Footer */}
@@ -145,11 +161,19 @@ export const CertificateView = ({ name, elfImageUrl, onBack }: CertificateViewPr
               />
             </div>
 
-            <p className="max-w-lg text-gray-700 leading-relaxed">
+            <p className="max-w-lg text-gray-700 leading-relaxed mb-6">
               Henkilö on osoittanut heittäytymiskykyä ja tutustunut tekoälyn mahdollisuuksiin 
               Joulun Osaaja -pajassa. Todistus on myönnetty tunnustuksena rohkeudesta 
               kokeilla uutta teknologiaa luovalla tavalla.
             </p>
+
+            {/* Gift wish - print version */}
+            {displayWish && (
+              <div className="max-w-lg mb-6 p-4 rounded-lg bg-amber-50 border border-amber-200">
+                <p className="text-sm text-gray-500 mb-1">Tontun lahjatoive:</p>
+                <p className="text-gray-800 italic">"{displayWish}"</p>
+              </div>
+            )}
           </div>
 
           <div className="mt-auto pt-12 border-t border-amber-200">
