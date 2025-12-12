@@ -87,10 +87,10 @@ export const CameraView = ({ onCapture, onBack }: CameraViewProps) => {
     <div className="kiosk-card fade-in">
       <div className="text-center mb-6">
         <h1 className="kiosk-title font-display text-3xl md:text-4xl">
-          Ota kuva itsestäsi 📸
+          Kamera – ota alkuperäinen kuva 📸
         </h1>
         <p className="kiosk-subtitle mt-2">
-          Asetu kameran eteen ja hymyile!
+          Asetu kameran eteen ja hymyile! Kuvaa ei rajata pois tai korvata – se toimii sellaisenaan AI-muunnoksen pohjana.
         </p>
       </div>
 
@@ -144,14 +144,14 @@ export const CameraView = ({ onCapture, onBack }: CameraViewProps) => {
           </>
         ) : (
           <>
-            <Button
-              onClick={handleConfirm}
-              variant="kiosk"
-              size="kiosk"
-            >
-              <Wand2 className="w-8 h-8 mr-3" />
-              Tee minusta tonttu ✨
-            </Button>
+          <Button
+            onClick={handleConfirm}
+            variant="kiosk"
+            size="kiosk"
+          >
+            <Wand2 className="w-8 h-8 mr-3" />
+            Käynnistä AI-muunnos ✨
+          </Button>
             <Button
               onClick={retakePhoto}
               variant="kioskSecondary"
