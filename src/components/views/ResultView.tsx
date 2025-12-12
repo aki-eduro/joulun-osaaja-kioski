@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { FileText, Award, RefreshCw, Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { FileText, Award, RefreshCw, Loader2, ExternalLink } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 interface ResultViewProps {
@@ -23,51 +22,66 @@ export const ResultView = ({
 }: ResultViewProps) => {
   const [isSendingBadge, setIsSendingBadge] = useState(false);
   const [badgeSent, setBadgeSent] = useState(false);
+  const [credentialUrl, setCredentialUrl] = useState<string | null>(null);
+
+  const hasEmail = email && email.trim().length > 0 && email.includes("@");
 
   const handleSendBadge = async () => {
+    if (!hasEmail) return;
+
+    // Confirm before sending
+    const confirmed = window.confirm(
+      `Lähetetäänkö Joulun Osaaja -osaamismerkki osoitteeseen ${email}?`
+    );
+    if (!confirmed) return;
+
     setIsSendingBadge(true);
     try {
-      const { data, error } = await supabase.functions.invoke("award-badge", {
-        body: { name, email, recordId },
+      // Get proxy URL and badge ID from localStorage
+      const proxyUrl = localStorage.getItem("OBF_PROXY_URL") || "https://joulun-osaaja-obf-proxy.aki-oksala.workers.dev";
+      const badgeId = localStorage.getItem("OBF_BADGE_ID") || "";
+
+      if (!badgeId) {
+        toast({
+          title: "Asetukset puuttuvat",
+          description: "OBF Badge ID puuttuu. Avaa asetukset aloitussivulta ja lisää Badge ID.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const response = await fetch(proxyUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recipient_email: email,
+          recipient_name: name,
+          badge_id: badgeId,
+          record_id: recordId,
+        }),
       });
 
-      if (error) throw error;
+      const data = await response.json();
 
-      if (data?.success) {
+      if (response.ok && data.success) {
         setBadgeSent(true);
+        if (data.credential_url) {
+          setCredentialUrl(data.credential_url);
+        }
         toast({
-          title: "Osaamismerkki lähetetty!",
+          title: "Osaamismerkki lähetetty! ✅",
           description: `Merkki on lähetetty osoitteeseen ${email}`,
         });
       } else {
-        // Handle specific error codes
-        const errorCode = data?.error;
-        
-        if (errorCode === "OBF_NOT_CONFIGURED") {
-          toast({
-            title: "Osaamismerkki ei käytössä",
-            description: "Osaamismerkin lähetys ei ole vielä käytössä (OBF-asetukset puuttuvat).",
-            variant: "destructive",
-          });
-        } else if (errorCode === "OBF_REQUEST_FAILED") {
-          toast({
-            title: "Lähetys epäonnistui",
-            description: "Osaamismerkin lähetys epäonnistui. Kokeile hetken kuluttua uudelleen tai pyydä ohjaajaa tarkistamaan asetukset.",
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Virhe",
-            description: data?.message || "Tuntematon virhe tapahtui.",
-            variant: "destructive",
-          });
-        }
+        throw new Error(data.message || data.error || "Lähetys epäonnistui");
       }
     } catch (error) {
       console.error("Badge error:", error);
       toast({
-        title: "Virhe",
-        description: "Osaamismerkin lähetys epäonnistui. Yritä uudelleen.",
+        title: "Lähetys epäonnistui",
+        description: error instanceof Error ? error.message : "Kokeile uudelleen hetken kuluttua.",
         variant: "destructive",
       });
     } finally {
@@ -117,28 +131,44 @@ export const ResultView = ({
             Tulosta Joulun Osaaja -todistus
           </Button>
 
-          <Button
-            onClick={handleSendBadge}
-            variant="kioskSecondary"
-            disabled={isSendingBadge || badgeSent}
-          >
-            {isSendingBadge ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                Lähetetään...
-              </>
-            ) : badgeSent ? (
-              <>
-                <Award className="w-5 h-5 mr-2" />
-                Merkki lähetetty! ✓
-              </>
-            ) : (
-              <>
-                <Award className="w-5 h-5 mr-2" />
-                Lähetä osaamismerkki sähköpostiini
-              </>
-            )}
-          </Button>
+          {/* Badge button - only show if email provided */}
+          {hasEmail && (
+            <Button
+              onClick={handleSendBadge}
+              variant="kioskSecondary"
+              disabled={isSendingBadge || badgeSent}
+            >
+              {isSendingBadge ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Lähetetään...
+                </>
+              ) : badgeSent ? (
+                <>
+                  <Award className="w-5 h-5 mr-2" />
+                  Merkki lähetetty! ✓
+                </>
+              ) : (
+                <>
+                  <Award className="w-5 h-5 mr-2" />
+                  Lähetä osaamismerkki sähköpostiini
+                </>
+              )}
+            </Button>
+          )}
+
+          {/* Show credential URL link if available */}
+          {credentialUrl && (
+            <a
+              href={credentialUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 text-primary hover:text-primary/80 transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Avaa osaamismerkki
+            </a>
+          )}
 
           <Button
             onClick={onRestart}

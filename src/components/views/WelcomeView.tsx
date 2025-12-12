@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Settings } from "lucide-react";
+import { SettingsModal } from "@/components/SettingsModal";
 
 interface WelcomeViewProps {
   onNext: (name: string, email: string) => void;
@@ -9,8 +10,10 @@ interface WelcomeViewProps {
 export const WelcomeView = ({ onNext }: WelcomeViewProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [showSettings, setShowSettings] = useState(false);
 
-  const isValid = name.trim() && email.trim() && email.includes("@");
+  // Name required (min 2 chars), email optional
+  const isValid = name.trim().length >= 2;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +23,16 @@ export const WelcomeView = ({ onNext }: WelcomeViewProps) => {
   };
 
   return (
-    <div className="kiosk-card fade-in">
+    <div className="kiosk-card fade-in relative">
+      {/* Settings button */}
+      <button
+        onClick={() => setShowSettings(true)}
+        className="absolute top-4 right-4 p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+        aria-label="Asetukset"
+      >
+        <Settings className="w-5 h-5" />
+      </button>
+
       <div className="text-center mb-10">
         <div className="flex justify-center mb-6">
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center pulse-glow">
@@ -41,7 +53,7 @@ export const WelcomeView = ({ onNext }: WelcomeViewProps) => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
           <label htmlFor="name" className="block text-lg font-medium text-foreground">
-            Nimesi
+            Nimesi <span className="text-destructive">*</span>
           </label>
           <input
             id="name"
@@ -51,12 +63,14 @@ export const WelcomeView = ({ onNext }: WelcomeViewProps) => {
             placeholder="Kirjoita nimesi..."
             className="kiosk-input"
             autoComplete="name"
+            minLength={2}
+            required
           />
         </div>
 
         <div className="space-y-2">
           <label htmlFor="email" className="block text-lg font-medium text-foreground">
-            Sähköpostiosoitteesi
+            Sähköpostiosoitteesi <span className="text-muted-foreground text-sm">(vapaaehtoinen)</span>
           </label>
           <input
             id="email"
@@ -70,7 +84,7 @@ export const WelcomeView = ({ onNext }: WelcomeViewProps) => {
         </div>
 
         <p className="text-sm text-muted-foreground p-4 rounded-xl bg-muted/50">
-          Tietoja käytetään vain tonttukuvan luomiseen ja osaamismerkin myöntämiseen.
+          Sähköposti on vapaaehtoinen. Sitä käytetään vain osaamismerkin lähettämiseen.
         </p>
 
         <Button
@@ -83,6 +97,8 @@ export const WelcomeView = ({ onNext }: WelcomeViewProps) => {
           Aloita seikkailu ✨
         </Button>
       </form>
+
+      <SettingsModal open={showSettings} onOpenChange={setShowSettings} />
     </div>
   );
 };

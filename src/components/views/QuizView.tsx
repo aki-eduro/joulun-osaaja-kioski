@@ -10,7 +10,7 @@ interface QuizViewProps {
 
 export const QuizView = ({ name, onNext, onBack }: QuizViewProps) => {
   const [answer, setAnswer] = useState("");
-  const maxLength = 280;
+  const maxLength = 160;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,28 +28,30 @@ export const QuizView = ({ name, onNext, onBack }: QuizViewProps) => {
           </div>
         </div>
         <h1 className="kiosk-title font-display text-3xl md:text-4xl">
-          Hei {name}! 👋
+          Pieni joululupaus 🎁
         </h1>
         <p className="kiosk-subtitle mt-4">
-          Yksi kysymys sinulle ennen tonttukuvaa
+          Hei {name}! Vastaa yhteen kysymykseen ennen tonttukuvaa.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-4">
-          <label htmlFor="quiz" className="block text-xl font-medium text-foreground text-center">
-            Kerro lyhyesti, mitä toivoisit joululahjaksi tai millainen olisi unelmiesi joululahja?
+          <label htmlFor="quiz" className="block text-xl font-medium text-foreground text-center leading-relaxed">
+            Mikä on sinun joulun supervoima tänään – ja mitä toivot eniten?
           </label>
           <textarea
             id="quiz"
             value={answer}
             onChange={(e) => setAnswer(e.target.value.slice(0, maxLength))}
-            placeholder="Esimerkiksi: Uusi kitara, Lapin mökkireissu, pelitietokone..."
+            placeholder="Esim. Teen hyvää mieltä muille – ja toivon lämpimiä lapasia sekä uuden tietokoneen."
             className="kiosk-input min-h-[160px] resize-none"
             rows={5}
           />
           <div className="text-right text-muted-foreground">
-            {answer.length} / {maxLength} merkkiä
+            <span className={answer.length >= maxLength ? "text-destructive" : ""}>
+              {answer.length}
+            </span> / {maxLength} merkkiä
           </div>
         </div>
 
