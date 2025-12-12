@@ -15,10 +15,13 @@ serve(async (req) => {
   try {
     const { name, email, quiz_answer, image_base64 } = await req.json();
 
-    console.log("Processing elf image request for:", name);
+    const trimmedName = typeof name === "string" ? name.trim() : "";
+    const safeEmail = typeof email === "string" ? email.trim() : "";
 
-    if (!name || !email || !image_base64) {
-      throw new Error("Missing required fields: name, email, or image_base64");
+    console.log("Processing elf image request for:", trimmedName);
+
+    if (!trimmedName || !image_base64) {
+      throw new Error("Missing required fields: name or image_base64");
     }
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -131,8 +134,8 @@ serve(async (req) => {
     const { data: record, error: dbError } = await supabase
       .from("elf_badges")
       .insert({
-        name,
-        email,
+        name: trimmedName,
+        email: safeEmail || null,
         quiz_answer,
         elf_image_url: imageUrl,
       })
