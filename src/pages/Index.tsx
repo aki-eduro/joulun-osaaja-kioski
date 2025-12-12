@@ -77,7 +77,6 @@ const Index = () => {
           <CertificateView
             name={elfData.name}
             elfImageUrl={elfData.elfImageUrl || elfData.capturedImage || ""}
-            wish={elfData.wish}
             badgeImage={elfData.badgeImage}
             onBack={handleRestart}
           />

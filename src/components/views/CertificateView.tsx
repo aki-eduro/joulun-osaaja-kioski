@@ -5,19 +5,11 @@ import badgeFallback from "@/assets/joulu-osaaja-badge.png";
 interface CertificateViewProps {
   name: string;
   elfImageUrl: string;
-  wish?: string;
   badgeImage?: string;
   onBack: () => void;
 }
 
-const truncateWish = (wish?: string) => {
-  if (!wish) return null;
-  const trimmed = wish.trim();
-  if (!trimmed) return null;
-  return trimmed.length > 160 ? `${trimmed.slice(0, 160)}…` : trimmed;
-};
-
-export const CertificateView = ({ name, elfImageUrl, wish, badgeImage, onBack }: CertificateViewProps) => {
+export const CertificateView = ({ name, elfImageUrl, badgeImage, onBack }: CertificateViewProps) => {
   const today = new Date().toLocaleDateString("fi-FI", {
     day: "numeric",
     month: "long",
@@ -25,7 +17,6 @@ export const CertificateView = ({ name, elfImageUrl, wish, badgeImage, onBack }:
   });
 
   const handlePrint = () => window.print();
-  const displayWish = truncateWish(wish);
   const badgeSrc = badgeImage || badgeFallback;
 
   return (
@@ -67,13 +58,6 @@ export const CertificateView = ({ name, elfImageUrl, wish, badgeImage, onBack }:
               <p className="max-w-2xl text-christmas-navy/80 leading-relaxed">
                 Tämä todistus myönnetään henkilölle {name}, joka on suorittanut Joulun Osaaja -tehtävän ja luonut oman tonttiversionsa tekoälyn avulla.
               </p>
-
-              {displayWish && (
-                <div className="max-w-2xl w-full p-4 rounded-lg bg-christmas-gold/10 border border-christmas-gold/20">
-                  <p className="text-sm text-christmas-navy/60 mb-1">Joulun supervoima & lahjatoive</p>
-                  <p className="text-christmas-navy/90 italic">“{displayWish}”</p>
-                </div>
-              )}
             </div>
 
             <div className="flex justify-center">
@@ -121,13 +105,6 @@ export const CertificateView = ({ name, elfImageUrl, wish, badgeImage, onBack }:
           <p className="max-w-2xl mx-auto text-center text-gray-700 leading-relaxed mb-4">
             Tämä todistus myönnetään henkilölle {name}, joka on suorittanut Joulun Osaaja -tehtävän ja luonut oman tonttiversionsa tekoälyn avulla.
           </p>
-
-          {displayWish && (
-            <div className="max-w-2xl mx-auto mb-4 p-4 rounded-lg bg-amber-50 border border-amber-200 text-center">
-              <p className="text-sm text-gray-500 mb-1">Joulun supervoima & lahjatoive</p>
-              <p className="text-gray-800 italic">“{displayWish}”</p>
-            </div>
-          )}
 
           <div className="flex justify-center mb-4">
             <img src={badgeSrc} alt="Liitetty osaamismerkki" className="w-[3cm] h-[3cm] object-contain" />
