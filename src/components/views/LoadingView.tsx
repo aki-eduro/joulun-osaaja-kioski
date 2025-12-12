@@ -10,13 +10,13 @@ export const LoadingView = () => {
             <Sparkles className="w-12 h-12 text-primary animate-bounce" />
           </div>
         </div>
-        
+
         <h1 className="kiosk-title font-display text-3xl md:text-4xl mb-4">
-          Luodaan tonttukuvaasi...
+          Muokataan tonttukuvaasi...
         </h1>
-        
+
         <p className="kiosk-subtitle text-lg">
-          Tekoäly työskentelee taikuuden parissa!
+          Lisätään tonttulakki, korvat, asu ja jouluinen miljöö – omilla kasvonpiirteilläsi.
         </p>
         
         <div className="flex justify-center mt-8">

@@ -182,6 +182,14 @@
     @apply w-full h-full object-cover;
   }
 
+  .certificate-container {
+    @apply w-full flex justify-center px-4 pb-8;
+  }
+
+  .certificate-page {
+    @apply w-full max-w-[900px];
+  }
+
   .snowfall {
     position: fixed;
     top: 0;
@@ -290,11 +298,15 @@
     color-adjust: exact !important;
   }
 
+  html,
   body {
     background: white !important;
     color: black !important;
     margin: 0;
     padding: 0;
+    width: 100%;
+    height: auto;
+    min-height: auto;
   }
 
   .no-print {
@@ -311,12 +323,15 @@
 
   .certificate-print-page {
     width: 100%;
-    min-height: 100vh;
+    min-height: 0;
+    height: auto;
     padding: 0;
     margin: 0;
     background: white !important;
     display: flex;
     flex-direction: column;
+    page-break-inside: avoid;
+    overflow: hidden;
   }
 
   img {

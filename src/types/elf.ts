@@ -1,11 +1,16 @@
 export interface ElfData {
   id?: string;
   name: string;
-  email: string;
-  quizAnswer: string;
+  wish: string;
+  badgeImage?: string;
   capturedImage?: string;
   elfImageUrl?: string;
-  badgeIssued?: boolean;
 }
 
-export type WizardStep = "welcome" | "quiz" | "camera" | "loading" | "result" | "certificate" | "info";
+export type WizardStep =
+  | "welcome"
+  | "name"
+  | "wish"
+  | "camera"
+  | "transform"
+  | "certificate";
