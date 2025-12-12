@@ -240,13 +240,61 @@
   }
 }
 
+/* Certificate colors for screen */
+.bg-christmas-snow {
+  background-color: hsl(220 30% 97%);
+}
+
+.text-christmas-navy {
+  color: hsl(222 47% 15%);
+}
+
+.text-christmas-red {
+  color: hsl(0 72% 45%);
+}
+
+.text-christmas-gold {
+  color: hsl(43 96% 50%);
+}
+
+.bg-christmas-red\/10 {
+  background-color: hsl(0 72% 45% / 0.1);
+}
+
+.bg-christmas-gold\/10 {
+  background-color: hsl(43 96% 56% / 0.1);
+}
+
+.border-christmas-gold\/20 {
+  border-color: hsl(43 96% 56% / 0.2);
+}
+
+.border-christmas-gold\/30 {
+  border-color: hsl(43 96% 56% / 0.3);
+}
+
+.via-christmas-gold {
+  --tw-gradient-via: hsl(43 96% 56%);
+}
+
 /* Print styles for certificate */
 @media print {
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
   body {
     background: white !important;
     color: black !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    margin: 0;
+    padding: 0;
   }
 
   .no-print {
@@ -257,12 +305,23 @@
     display: block !important;
   }
 
-  .certificate-page {
-    width: 210mm;
-    min-height: 297mm;
-    padding: 20mm;
+  .certificate-container {
+    display: none !important;
+  }
+
+  .certificate-print-page {
+    width: 100%;
+    min-height: 100vh;
+    padding: 0;
     margin: 0;
     background: white !important;
+    display: flex;
+    flex-direction: column;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
   }
 }
 
