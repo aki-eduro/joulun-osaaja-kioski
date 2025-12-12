@@ -139,7 +139,7 @@ export const CertificateView = ({ name, elfImageUrl, quizAnswer, onBack }: Certi
       <div className="hidden print:block">
         <div className="certificate-print-page">
           {/* Header */}
-          <div className="text-center mb-10">
+          <div className="text-center mb-8">
             <h1 className="text-5xl font-bold font-display text-black mb-2">
               Joulun Osaaja
             </h1>
@@ -148,7 +148,7 @@ export const CertificateView = ({ name, elfImageUrl, quizAnswer, onBack }: Certi
             </p>
           </div>
 
-          <div className="flex items-center justify-center gap-4 mb-10">
+          <div className="flex items-center justify-center gap-4 mb-8">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
             <span className="text-amber-500 text-2xl">❄</span>
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
@@ -158,7 +158,7 @@ export const CertificateView = ({ name, elfImageUrl, quizAnswer, onBack }: Certi
             <p className="text-lg text-gray-600 mb-4">
               Tämä todistus myönnetään
             </p>
-            <h2 className="text-4xl font-bold font-display text-black mb-10">
+            <h2 className="text-4xl font-bold font-display text-black mb-8">
               {name}
             </h2>
 
@@ -193,7 +193,7 @@ export const CertificateView = ({ name, elfImageUrl, quizAnswer, onBack }: Certi
             />
           </div>
 
-          <div className="mt-auto pt-10 border-t border-amber-200">
+          <div className="mt-auto pt-8 border-t border-amber-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500 mb-1">Päivämäärä</p>

@@ -37,10 +37,13 @@ const Index = () => {
     setStep("loading");
 
     try {
+      const trimmedName = elfData.name.trim();
+      const trimmedEmail = elfData.email.trim();
+
       const { data, error } = await supabase.functions.invoke("elf-image", {
         body: {
-          name: elfData.name,
-          email: elfData.email,
+          name: trimmedName,
+          email: trimmedEmail || "",
           quiz_answer: elfData.quizAnswer,
           image_base64: imageBase64,
         },

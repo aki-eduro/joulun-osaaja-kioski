@@ -71,3 +71,8 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+
+## Local test checklist
+- **No-email flow**: run the kiosk, complete the flow without entering an email, and confirm elf creation succeeds without errors.
+- **Email + badge flow**: repeat with a valid email, verify the elf image is created, and trigger badge sending (should only appear when email is provided).
+- **Print layout**: open the certificate view and use print preview to confirm the certificate fits on a single A4 page without extra margins or a second page.
