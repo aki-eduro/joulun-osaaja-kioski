@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { KioskLayout } from "@/components/KioskLayout";
 import { WelcomeView } from "@/components/views/WelcomeView";
-import { NameView } from "@/components/views/NameView";
-import { WishView } from "@/components/views/WishView";
 import { CameraView } from "@/components/views/CameraView";
 import { LoadingView } from "@/components/views/LoadingView";
 import { ResultView } from "@/components/views/ResultView";
@@ -15,25 +13,17 @@ const Index = () => {
   const [step, setStep] = useState<WizardStep>("welcome");
   const [elfData, setElfData] = useState<ElfData>({
     name: "",
-    email: undefined,
     wish: "",
-    badgeImage: undefined,
+    email: undefined,
   });
 
   const handleRestart = () => {
-    setElfData({ name: "", email: undefined, wish: "", badgeImage: undefined, capturedImage: undefined, elfImageUrl: undefined, id: undefined });
+    setElfData({ name: "", wish: "", email: undefined, capturedImage: undefined, elfImageUrl: undefined, id: undefined });
     setStep("welcome");
   };
 
-  const handleWelcomeNext = () => setStep("name");
-
-  const handleNameNext = (name: string, email?: string) => {
-    setElfData((prev) => ({ ...prev, name, email }));
-    setStep("wish");
-  };
-
-  const handleWishNext = (wish: string, badgeImage?: string) => {
-    setElfData((prev) => ({ ...prev, wish, badgeImage }));
+  const handleWelcomeNext = (name: string, wish: string, email?: string) => {
+    setElfData((prev) => ({ ...prev, name, wish, email }));
     setStep("camera");
   };
 
@@ -47,7 +37,7 @@ const Index = () => {
         body: {
           name: elfData.name,
           email: elfData.email || "",
-          quiz_answer: elfData.wish,
+          wish: elfData.wish,
           image_base64: imageBase64,
         },
       });
@@ -78,24 +68,15 @@ const Index = () => {
     switch (step) {
       case "welcome":
         return <WelcomeView onStart={handleWelcomeNext} />;
-      case "name":
-        return <NameView onNext={handleNameNext} onBack={handleRestart} />;
-      case "wish":
-        return (
-          <WishView
-            onNext={handleWishNext}
-            onBack={() => setStep("name")}
-            initialBadge={elfData.badgeImage}
-          />
-        );
       case "camera":
-        return <CameraView onCapture={handleCapture} onBack={() => setStep("wish")} />;
+        return <CameraView onCapture={handleCapture} onBack={() => setStep("welcome")} />;
       case "transform":
         return <LoadingView />;
       case "result":
         return (
           <ResultView
             name={elfData.name}
+            wish={elfData.wish}
             email={elfData.email || ""}
             elfImageUrl={elfData.elfImageUrl || elfData.capturedImage || ""}
             recordId={elfData.id || ""}
@@ -107,9 +88,8 @@ const Index = () => {
         return (
           <CertificateView
             name={elfData.name}
+            wish={elfData.wish}
             elfImageUrl={elfData.elfImageUrl || elfData.capturedImage || ""}
-            badgeImage={elfData.badgeImage}
-            quizAnswer={elfData.wish}
             onBack={() => setStep("result")}
           />
         );
