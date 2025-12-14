@@ -13,12 +13,13 @@ serve(async (req) => {
   }
 
   try {
-    const { name, email, quiz_answer, image_base64 } = await req.json();
+    const { name, email, wish, image_base64 } = await req.json();
 
     const trimmedName = typeof name === "string" ? name.trim() : "";
     const safeEmail = typeof email === "string" ? email.trim() : "";
+    const giftWish = typeof wish === "string" ? wish.trim().slice(0, 80) : "";
 
-    console.log("Processing elf image request for:", trimmedName);
+    console.log("Processing elf image request for:", trimmedName, "with wish:", giftWish);
 
     if (!trimmedName || !image_base64) {
       throw new Error("Missing required fields: name or image_base64");
@@ -33,19 +34,10 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Build the prompt with optional gift wish
-    const wish = (quiz_answer || "").trim().slice(0, 120);
-    
-    let promptText = "Transform this person into a friendly, cheerful Christmas elf. Add a festive red and green elf hat with a gold bell, pointed elf ears, rosy cheeks. Keep the person's face recognizable and maintain their expression. High quality, photorealistic style with warm Christmas lighting.";
-    
-    if (wish) {
-      // Include gift wish in the scene
-      promptText += ` The background and scene should subtly reflect this Christmas gift wish: "${wish}". Use it as inspiration for the environment, gifts, or atmosphere visible in the background, but keep the person clearly visible as the main subject.`;
-      console.log("Including gift wish in prompt:", wish);
-    } else {
-      // Default snowy background
-      promptText += " Use a festive snowy winter background with soft bokeh lights and warm atmosphere.";
-    }
+    // Fixed AI prompt with gift wish embedded
+    const promptText = `Transform the person into a realistic Christmas elf while preserving facial proportions and identity. Add a red elf hat, subtle elf ears, festive winter clothing. Create a warm Nordic Christmas scene with soft lighting and gentle snowfall. Incorporate the user's gift wish: '${giftWish}' into the background as tasteful festive elements (props, subtle icons, or a small elegant sign), not covering the face. High realism, no distortion, sharp details.`;
+
+    console.log("AI prompt:", promptText);
 
     // Generate elf image using Lovable AI Gateway
     console.log("Calling Lovable AI for elf transformation...");
@@ -130,13 +122,13 @@ serve(async (req) => {
     const imageUrl = urlData.publicUrl;
     console.log("Image uploaded:", imageUrl);
 
-    // Create database record
+    // Create database record (email can be null)
     const { data: record, error: dbError } = await supabase
       .from("elf_badges")
       .insert({
         name: trimmedName,
-        email: safeEmail || null,
-        quiz_answer,
+        email: safeEmail || `anon_${Date.now()}@temp.local`,
+        quiz_answer: giftWish,
         elf_image_url: imageUrl,
       })
       .select()

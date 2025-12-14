@@ -1,1 +1,7 @@
 project_id = "qmbdcilykylvwfbganai"
+
+[functions.elf-image]
+verify_jwt = false
+
+[functions.award-badge]
+verify_jwt = false
