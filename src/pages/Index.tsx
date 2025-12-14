@@ -5,28 +5,30 @@ import { NameView } from "@/components/views/NameView";
 import { WishView } from "@/components/views/WishView";
 import { CameraView } from "@/components/views/CameraView";
 import { LoadingView } from "@/components/views/LoadingView";
+import { ResultView } from "@/components/views/ResultView";
 import { CertificateView } from "@/components/views/CertificateView";
 import { toast } from "@/hooks/use-toast";
 import type { WizardStep, ElfData } from "@/types/elf";
-import { createElfPortrait } from "@/utils/elfImageGenerator";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [step, setStep] = useState<WizardStep>("welcome");
   const [elfData, setElfData] = useState<ElfData>({
     name: "",
+    email: undefined,
     wish: "",
     badgeImage: undefined,
   });
 
   const handleRestart = () => {
-    setElfData({ name: "", wish: "", badgeImage: undefined, capturedImage: undefined, elfImageUrl: undefined });
+    setElfData({ name: "", email: undefined, wish: "", badgeImage: undefined, capturedImage: undefined, elfImageUrl: undefined, id: undefined });
     setStep("welcome");
   };
 
   const handleWelcomeNext = () => setStep("name");
 
-  const handleNameNext = (name: string) => {
-    setElfData((prev) => ({ ...prev, name }));
+  const handleNameNext = (name: string, email?: string) => {
+    setElfData((prev) => ({ ...prev, name, email }));
     setStep("wish");
   };
 
@@ -40,19 +42,37 @@ const Index = () => {
     setStep("transform");
 
     try {
-      const elfified = await createElfPortrait(imageBase64, elfData.wish, elfData.name);
-      setElfData((prev) => ({ ...prev, elfImageUrl: elfified }));
-      setStep("certificate");
+      // Call the AI edge function to generate elf image
+      const { data, error } = await supabase.functions.invoke("elf-image", {
+        body: {
+          name: elfData.name,
+          email: elfData.email || "",
+          quiz_answer: elfData.wish,
+          image_base64: imageBase64,
+        },
+      });
+
+      if (error) throw error;
+      if (!data.success) throw new Error(data.error || "AI-muunnos epäonnistui");
+
+      setElfData((prev) => ({ 
+        ...prev, 
+        elfImageUrl: data.image_url,
+        id: data.id 
+      }));
+      setStep("result");
     } catch (error) {
       console.error("Error generating elf image:", error);
       toast({
         title: "Virhe",
-        description: "AI-muunnos epäonnistui. Yritä uudelleen.",
+        description: error instanceof Error ? error.message : "AI-muunnos epäonnistui. Yritä uudelleen.",
         variant: "destructive",
       });
       setStep("camera");
     }
   };
+
+  const handleViewCertificate = () => setStep("certificate");
 
   const renderStep = () => {
     switch (step) {
@@ -72,13 +92,25 @@ const Index = () => {
         return <CameraView onCapture={handleCapture} onBack={() => setStep("wish")} />;
       case "transform":
         return <LoadingView />;
+      case "result":
+        return (
+          <ResultView
+            name={elfData.name}
+            email={elfData.email || ""}
+            elfImageUrl={elfData.elfImageUrl || elfData.capturedImage || ""}
+            recordId={elfData.id || ""}
+            onViewCertificate={handleViewCertificate}
+            onRestart={handleRestart}
+          />
+        );
       case "certificate":
         return (
           <CertificateView
             name={elfData.name}
             elfImageUrl={elfData.elfImageUrl || elfData.capturedImage || ""}
             badgeImage={elfData.badgeImage}
-            onBack={handleRestart}
+            quizAnswer={elfData.wish}
+            onBack={() => setStep("result")}
           />
         );
       default:

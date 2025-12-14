@@ -1,6 +1,7 @@
 export interface ElfData {
   id?: string;
   name: string;
+  email?: string;
   wish: string;
   badgeImage?: string;
   capturedImage?: string;
@@ -13,4 +14,5 @@ export type WizardStep =
   | "wish"
   | "camera"
   | "transform"
+  | "result"
   | "certificate";
